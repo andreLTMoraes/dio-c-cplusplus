@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Jogo da Velha</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #1a1a2e;
+    font-family: 'Courier New', monospace;
+    color: #eee;
+  }
+
+  h1 { font-size: 2rem; margin-bottom: 1rem; letter-spacing: 4px; color: #e94560; }
+
+  #status { font-size: 1.1rem; margin-bottom: 1.5rem; min-height: 1.5rem; color: #a8dadc; }
+
+  #board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 6px;
+  }
+
+  .cell {
+    width: 100px;
+    height: 100px;
+    background: #16213e;
+    border: 2px solid #0f3460;
+    font-size: 2.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .cell:hover:empty { background: #0f3460; }
+  .cell.x { color: #e94560; }
+  .cell.o { color: #a8dadc; }
+
+  #restart {
+    margin-top: 1.5rem;
+    padding: 0.6rem 2rem;
+    background: none;
+    border: 2px solid #e94560;
+    color: #e94560;
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  #restart:hover { background: #e94560; color: #1a1a2e; }
+</style>
+</head>
+<body>
+
+<h1>JOGO DA VELHA</h1>
+<div id="status">Vez do X</div>
+<div id="board">
+  <div class="cell" onclick="play(0)"></div>
+  <div class="cell" onclick="play(1)"></div>
+  <div class="cell" onclick="play(2)"></div>
+  <div class="cell" onclick="play(3)"></div>
+  <div class="cell" onclick="play(4)"></div>
+  <div class="cell" onclick="play(5)"></div>
+  <div class="cell" onclick="play(6)"></div>
+  <div class="cell" onclick="play(7)"></div>
+  <div class="cell" onclick="play(8)"></div>
+</div>
+<button id="restart" onclick="restart()">REINICIAR</button>
+
+<script>
+  let board = Array(9).fill('');
+  let current = 'X';
+  let over = false;
+  const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+  function play(i) {
+    if (over || board[i]) return;
+    board[i] = current;
+    const cells = document.querySelectorAll('.cell');
+    cells[i].textContent = current;
+    cells[i].classList.add(current.toLowerCase());
+
+    if (checkWin()) {
+      document.getElementById('status').textContent = `${current} venceu! 🎉`;
+      over = true;
+    } else if (board.every(c => c)) {
+      document.getElementById('status').textContent = 'Empate!';
+      over = true;
+    } else {
+      current = current === 'X' ? 'O' : 'X';
+      document.getElementById('status').textContent = `Vez do ${current}`;
+    }
+  }
+
+  function checkWin() {
+    return wins.some(([a, b, c]) => board[a] && board[a] === board[b] && board[b] === board[c]);
+  }
+
+  function restart() {
+    board = Array(9).fill('');
+    current = 'X';
+    over = false;
+    document.getElementById('status').textContent = 'Vez do X';
+    document.querySelectorAll('.cell').forEach(c => {
+      c.textContent = '';
+      c.className = 'cell';
+    });
+  }
+</script>
+</body>
+</html>
